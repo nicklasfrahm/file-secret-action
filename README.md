@@ -37,6 +37,7 @@ See [action.yml](./action.yml) for more detailed information.
 * `scope` - name of the organisation or username and repository
 * `secret` - name of the secret
 * `file` - file to be stored in secret
+* `visibility` - visibility of the secret within the organization, currently only _private_ and _all_ are supported
 
 ## Contributing
 
