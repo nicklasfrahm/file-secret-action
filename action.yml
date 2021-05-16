@@ -1,0 +1,32 @@
+name: "File to Secret for GitHub Actions"
+description: "Upload a file as a GitHub Actions Secret."
+author: "Nicklas Frahm"
+inputs:
+  token:
+    description: "github token for repositories or personal access token for organisations"
+    required: yes
+  scope:
+    description: "name of the organisation or username and repository"
+    required: yes
+  secret:
+    description: "name of the secret"
+    required: yes
+  file:
+    description: "file to be stored in secret"
+    required: yes
+  visibility:
+    description: "visibility of the secret within the organization, currently only private and all are supported"
+
+runs:
+  using: "docker"
+  image: "Dockerfile"
+  env:
+    TOKEN: ${{ inputs.token }}
+    FILE: ${{ inputs.file }}
+    SECRET: ${{ inputs.secret }}
+    SCOPE: ${{ inputs.scope }}
+    VISIBILITY: ${{ inputs.visibility }}
+
+branding:
+  icon: "lock"
+  color: "blue"
