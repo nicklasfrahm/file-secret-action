@@ -13,7 +13,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/jamesruan/sodium"
+	"golang.org/x/crypto/nacl/box"
 )
 
 const (
@@ -61,15 +61,14 @@ func main() {
 	resp.Body.Close()
 
 	// Decode base64 encoded string to bytes.
-	pubKeyBytes, err := base64.StdEncoding.DecodeString(gitHubKey.Key)
+	pubKeySlice, err := base64.StdEncoding.DecodeString(gitHubKey.Key)
 	if err != nil {
 		log.Fatalf("Failed to decoded base64-encoded public key: %v", err)
 	}
 
-	// Create public key.
-	pubKey := sodium.BoxPublicKey{
-		Bytes: sodium.Bytes(pubKeyBytes),
-	}
+	// Create fixed size public key array buffer.
+	var pubKey [32]byte
+	copy(pubKey[:], pubKeySlice)
 
 	// Read file.
 	file := os.Getenv("FILE")
@@ -79,7 +78,10 @@ func main() {
 	}
 
 	// Encrypt and base64-encode the encrypted file content.
-	encryptedBytes := sodium.Bytes(fileBytes).SealedBox(pubKey)
+	encryptedBytes, err := box.SealAnonymous(nil, fileBytes, &pubKey, nil)
+	if err != nil {
+		log.Fatalf("Failed to encrypt secret: %v", err)
+	}
 	encrypted := base64.StdEncoding.EncodeToString(encryptedBytes)
 
 	// Create the request payload.
