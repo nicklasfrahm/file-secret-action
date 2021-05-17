@@ -23,7 +23,7 @@ jobs:
     - name: Upload kubeconfig
       uses: nicklasfrahm/file-secret-action@main
       with:
-        token: ${{ secrets.GITHUB_TOKEN }}
+        token: ${{ secrets.PAT }}
         scope: ${{ github.repository }}
         secret: KUBECONFIG
         file: kubeconfig.yml
