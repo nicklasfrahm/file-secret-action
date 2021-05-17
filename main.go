@@ -108,12 +108,15 @@ func main() {
 		log.Fatalf("Failed to create secret: %v", err)
 	}
 
-	action := "Updated"
+	action := "❌ Failed to create"
 	if resp.StatusCode == http.StatusCreated {
-		action = "Created"
+		action = "🔑 Created"
+	}
+	if resp.StatusCode == http.StatusNoContent {
+		action = "🔑 Updated"
 	}
 
-	log.Printf("🔑 %s secret: %s\n", action, secretName)
+	log.Printf("%s secret: %s %d\n", action, secretName, resp.StatusCode)
 }
 
 // RequestGitHubAPI makes a request against the GitHub API.
