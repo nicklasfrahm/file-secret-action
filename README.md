@@ -33,7 +33,7 @@ jobs:
 
 See [action.yml](./action.yml) for more detailed information.
 
-* `token` - personal access token with the `repo` permission, the standard `GITHUB_TOKEN` does not work
+* `token` - personal access token with the `workflow` permission, the standard `GITHUB_TOKEN` does not work
 * `scope` - name of the organisation or username and repository
 * `secret` - name of the secret
 * `file` - file to be stored in secret
