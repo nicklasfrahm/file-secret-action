@@ -33,10 +33,16 @@ type gitHubSecret struct {
 }
 
 func main() {
-	// Get repository public key.
-	scope := os.Getenv("SCOPE")
+	// Check if config variables are set.
+	requiredVariables := []string{"SCOPE", "TOKEN", "FILE", "SECRET"}
+	for _, variable := range requiredVariables {
+		if os.Getenv(variable) == "" {
+			log.Fatalf("❌ Failed to verify GitHub Action configuration: %s required", strings.ToLower(variable))
+		}
+	}
 
 	// Detect if the scope is a repository or an org.
+	scope := os.Getenv("SCOPE")
 	if strings.Contains(scope, "/") {
 		// Scope is a combination of username and repository, so a repository .
 		scope = "/repos/" + scope
@@ -48,23 +54,25 @@ func main() {
 	// Fetch public key.
 	publicKeyEndpoint := "/actions/secrets/public-key"
 	resp, err := RequestGitHubAPI("GET", scope+publicKeyEndpoint, nil)
-	if err != nil {
-		log.Fatalf("Failed to fetch public key: %v", err)
+	if err != nil || resp.StatusCode != http.StatusOK {
+		if err == nil {
+			err = errors.New(http.StatusText(resp.StatusCode))
+		}
+		log.Fatalf("❌ Failed to fetch public key: %v", err)
 	}
-	log.Println(scope + publicKeyEndpoint)
 
 	// Parse JSON response.
 	gitHubKey := new(gitHubPublicKey)
 	err = json.NewDecoder(resp.Body).Decode(gitHubKey)
 	if err != nil {
-		log.Fatalf("Failed to parse public key: %v", err)
+		log.Fatalf("❌ Failed to parse public key: %v", err)
 	}
 	resp.Body.Close()
 
 	// Decode base64 encoded string to bytes.
 	pubKeySlice, err := base64.StdEncoding.DecodeString(gitHubKey.Key)
 	if err != nil {
-		log.Fatalf("Failed to decoded base64-encoded public key: %v", err)
+		log.Fatalf("❌ Failed to decoded base64-encoded public key: %v", err)
 	}
 
 	// Create fixed size public key array buffer.
@@ -75,13 +83,13 @@ func main() {
 	file := os.Getenv("FILE")
 	fileBytes, err := ioutil.ReadFile(file)
 	if err != nil {
-		log.Fatalf("Failed to read file: %v", err)
+		log.Fatalf("❌ Failed to read file: %v", err)
 	}
 
 	// Encrypt and base64-encode the encrypted file content.
 	encryptedBytes, err := box.SealAnonymous(nil, fileBytes, &pubKey, nil)
 	if err != nil {
-		log.Fatalf("Failed to encrypt secret: %v", err)
+		log.Fatalf("❌ Failed to encrypt secret: %v", err)
 	}
 	encrypted := base64.StdEncoding.EncodeToString(encryptedBytes)
 
@@ -93,32 +101,31 @@ func main() {
 	}
 	secretBytes, err := json.Marshal(&secret)
 	if err != nil {
-		log.Fatalf("Failed to encode secret to JSON: %v", err)
+		log.Fatalf("❌ Failed to encode secret to JSON: %v", err)
 	}
 
 	// Check if secret name is valid.
 	secretName := os.Getenv("SECRET")
 	if secretName == "" {
-		log.Fatalf("Failed to create secret: %v", errors.New("secret name must not be empty"))
+		log.Fatalf("❌ Failed to create secret: %v", errors.New("secret name must not be empty"))
 	}
 
 	// Create or update the secret.
 	secretEndpoint := "/actions/secrets/" + os.Getenv("SECRET")
 	resp, err = RequestGitHubAPI("PUT", scope+secretEndpoint, bytes.NewReader(secretBytes))
-	if err != nil {
-		log.Fatalf("Failed to create secret: %v", err)
+	if err != nil || resp.StatusCode > http.StatusNoContent {
+		if err == nil {
+			err = errors.New(http.StatusText(resp.StatusCode))
+		}
+		log.Fatalf("❌ Failed to create secret: %v", err)
 	}
-	log.Println(scope + secretEndpoint)
 
-	action := "❌ Failed to create"
+	action := "Updated"
 	if resp.StatusCode == http.StatusCreated {
-		action = "🔑 Created"
-	}
-	if resp.StatusCode == http.StatusNoContent {
-		action = "🔑 Updated"
+		action = "Created"
 	}
 
-	log.Printf("%s secret: %s %d\n", action, secretName, resp.StatusCode)
+	log.Printf("🔑 %s secret: %s\n", action, secretName)
 }
 
 // RequestGitHubAPI makes a request against the GitHub API.
@@ -131,7 +138,7 @@ func RequestGitHubAPI(verb string, path string, body io.Reader) (*http.Response,
 	// Parse GitHub API URL.
 	u, err := url.Parse(githubAPIURL)
 	if err != nil {
-		log.Fatalf("Failed to parse API URL: %v", err)
+		log.Fatalf("❌ Failed to parse API URL: %v", err)
 	}
 
 	// Create HTTP client config.

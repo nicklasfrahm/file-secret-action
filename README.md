@@ -24,7 +24,7 @@ jobs:
       uses: nicklasfrahm/file-secret-action@main
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
-        scope: ${{ env.GITHUB_REPOSITORY }}
+        scope: ${{ github.repository }}
         secret: KUBECONFIG
         file: kubeconfig.yml
 ```
