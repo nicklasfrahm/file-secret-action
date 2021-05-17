@@ -19,7 +19,7 @@ inputs:
 
 runs:
   using: "docker"
-  image: "Dockerfile"
+  image: "docker://ghcr.io/nicklasfrahm/file-secret-action:main"
   env:
     TOKEN: ${{ inputs.token }}
     FILE: ${{ inputs.file }}
