@@ -3,7 +3,7 @@ description: "Upload a file as a GitHub Actions Secret."
 author: "Nicklas Frahm"
 inputs:
   token:
-    description: "github token for repositories or personal access token for organisations"
+    description: "personal access token with the `repo` permission"
     required: yes
   scope:
     description: "name of the organisation or username and repository"
