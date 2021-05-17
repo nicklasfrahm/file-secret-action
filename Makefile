@@ -1,9 +1,9 @@
 BIN_DIR	:= ./bin
 TARGET	:= file-secret-action
 
-$(BIN_DIR)/$(TARGET):
+$(BIN_DIR)/$(TARGET): main.go
 	@mkdir -p $(@D)
-	go build -o $@
+	go build -o $@ $^
 
 .PHONY: all clean
 

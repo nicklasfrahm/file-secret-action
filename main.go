@@ -9,7 +9,6 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-	"net/url"
 	"os"
 	"strings"
 
@@ -112,7 +111,6 @@ func main() {
 
 	// Create or update the secret.
 	secretEndpoint := "/actions/secrets/" + os.Getenv("SECRET")
-	log.Println(scope + secretEndpoint)
 	resp, err = RequestGitHubAPI("PUT", scope+secretEndpoint, bytes.NewReader(secretBytes))
 	if err != nil || resp.StatusCode > http.StatusNoContent {
 		if err == nil {
@@ -136,21 +134,14 @@ func RequestGitHubAPI(verb string, path string, body io.Reader) (*http.Response,
 	// or a GITHUB_TOKEN for repository secrets.
 	token := os.Getenv("TOKEN")
 
-	// Parse GitHub API URL.
-	u, err := url.Parse(githubAPIURL)
-	if err != nil {
-		log.Fatalf("❌ Failed to parse API URL: %v", err)
-	}
-
 	// Create HTTP client config.
-	req, err := http.NewRequest(verb, path, body)
+	req, err := http.NewRequest(verb, githubAPIURL+path, body)
 	if err != nil {
 		return nil, err
 	}
 	req.Header.Add("Accept", "application/vnd.github.v3+json")
 	req.Header.Add("Authorization", "Bearer "+token)
 	req.Header.Add("User-Agent", userAgent)
-	req.URL = u
 
 	return http.DefaultClient.Do(req)
 }
