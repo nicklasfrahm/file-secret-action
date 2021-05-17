@@ -1,4 +1,4 @@
-name: "File to Secret for GitHub Actions"
+name: "File to Secret"
 description: "Upload a file as a GitHub Actions Secret."
 author: "Nicklas Frahm"
 inputs:
