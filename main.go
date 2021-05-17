@@ -51,6 +51,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("Failed to fetch public key: %v", err)
 	}
+	log.Println(scope + publicKeyEndpoint)
 
 	// Parse JSON response.
 	gitHubKey := new(gitHubPublicKey)
@@ -107,6 +108,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("Failed to create secret: %v", err)
 	}
+	log.Println(scope + secretEndpoint)
 
 	action := "❌ Failed to create"
 	if resp.StatusCode == http.StatusCreated {
