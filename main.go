@@ -112,6 +112,7 @@ func main() {
 
 	// Create or update the secret.
 	secretEndpoint := "/actions/secrets/" + os.Getenv("SECRET")
+	log.Println(scope + secretEndpoint)
 	resp, err = RequestGitHubAPI("PUT", scope+secretEndpoint, bytes.NewReader(secretBytes))
 	if err != nil || resp.StatusCode > http.StatusNoContent {
 		if err == nil {
