@@ -18,16 +18,16 @@ jobs:
     name: File Secret
     runs-on: ubuntu-latest
     steps:
-    - name: Check out repository
-      uses: actions/checkout@master
+      - name: Check out repository
+        uses: actions/checkout@master
 
-    - name: Upload kubeconfig
-      uses: nicklasfrahm/file-secret-action@main
-      with:
-        token: ${{ secrets.PAT }}
-        scope: ${{ github.repository }}
-        secret: KUBECONFIG
-        file: kubeconfig.yml
+      - name: Upload kubeconfig
+        uses: nicklasfrahm/file-secret-action@main
+        with:
+          token: ${{ secrets.PAT }}
+          scope: ${{ github.repository }}
+          secret: KUBECONFIG
+          file: kubeconfig.yml
 ```
 
 ## Input variables
