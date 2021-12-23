@@ -5,6 +5,19 @@
 
 A [GitHub Action](https://github.com/features/actions) to upload a file as a GitHub Actions Secret.
 
+## Deprecation notice
+
+This repository is deprecated. I recommend to use the Github CLI instead and set up the following step:
+
+```yaml
+...
+      - name: Upload kubeconfig as pipeline secret
+        run: |
+          echo ${{ secrets.PERSONAL_ACCESS_TOKEN }} | gh auth login --with-token
+          gh secret set KUBECONFIG -r ${{ github.repository }} -e ${{ env.ENVIRONMENT }} < kubeconfig.yml
+...
+```
+
 ## Usage
 
 ```yaml
@@ -42,7 +55,7 @@ See [action.yml](./action.yml) for more detailed information.
 
 ## Contributing
 
-We would ❤️ for you to contribute to `nicklasfrahm/file-secret-action`, pull requests are welcome!
+This repository is archived and therefore frozen. Please maintain your own copies and forks.
 
 ## License
 
