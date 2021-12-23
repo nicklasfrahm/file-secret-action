@@ -1,4 +1,4 @@
-# 🔑 File to Secret for GitHub Actions
+# 🔑 File to Secret for GitHub Actions (deprecated)
 
 [![Go Report Card](https://goreportcard.com/badge/github.com/nicklasfrahm/file-secret-action)](https://goreportcard.com/report/github.com/nicklasfrahm/file-secret-action)
 [![container](https://github.com/nicklasfrahm/file-secret-action/actions/workflows/container.yml/badge.svg?branch=main)](https://github.com/nicklasfrahm/file-secret-action/actions/workflows/container.yml)
