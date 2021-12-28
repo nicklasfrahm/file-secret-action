@@ -14,7 +14,7 @@ This repository is deprecated. I recommend to use the Github CLI instead and set
       - name: Upload kubeconfig as pipeline secret
         run: |
           echo ${{ secrets.PERSONAL_ACCESS_TOKEN }} | gh auth login --with-token
-          gh secret set KUBECONFIG -r ${{ github.repository }} -e ${{ env.ENVIRONMENT }} < kubeconfig.yml
+          gh secret set KUBECONFIG -R ${{ github.repository }} -e ${{ env.ENVIRONMENT }} < kubeconfig.yml
 ...
 ```
 
